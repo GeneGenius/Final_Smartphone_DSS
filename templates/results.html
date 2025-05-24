@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Recommendations</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <h1>Top 3 Products for {{ priorities|join(", ")|capitalize }}</h1>
+    {% if recommendations|length == 0 %}
+    <p>No products match your criteria. Try adjusting your inputs.</p>
+    {% else %}
+    <ul>
+      {% for rec in recommendations %}
+      <li>
+        <strong>{{ rec.title }}</strong><br />
+        Price: ${{ "%.2f"|format(rec.price) }}<br />
+        {% if priorities|length == 1 and priorities[0] in ["camera", "battery",
+        "display", "performance", "build", "storage"] %} {{
+        priorities[0]|capitalize }} Sentiment: {{
+        "%.2f"|format(rec[priorities[0] + "_sentiment_roberta"]) }} ({{
+        rec[priorities[0] + "_mentions"]|int }} mentions)<br />
+        {% elif "value" in priorities %} Rating: {{
+        "%.1f"|format(rec.avg_rating) }}/5, Value Score: {{
+        "%.4f"|format(rec.value_score) }}<br />
+        {% else %} Overall Score: {{ "%.2f"|format(rec.composite_score) }}<br />
+        {% endif %} Reviews: {{ rec.review_count|int }}
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    <a href="/">Try Another Search</a>
+  </body>
+</html>

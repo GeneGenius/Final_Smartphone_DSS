@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Smartphone DSS</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <style>
+      .checkbox-group {
+        margin: 10px 0;
+      }
+      .checkbox-group label {
+        display: block;
+        margin: 5px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Decision Support System for Customers</h1>
+    <form method="POST" action="/">
+      <label for="price_limit">Maximum Budget ($):</label><br />
+      <input
+        type="number"
+        id="price_limit"
+        name="price_limit"
+        step="0.01"
+        min="0"
+        required
+      /><br /><br />
+
+      <label for="min_mentions">Minimum Review Mentions:</label><br />
+      <input
+        type="number"
+        id="min_mentions"
+        name="min_mentions"
+        min="0"
+        required
+      /><br /><br />
+
+      <label>Priorities (Select one or more, "Overall" is exclusive):</label
+      ><br />
+      <div class="checkbox-group">
+        <label
+          ><input type="checkbox" name="priorities" value="camera" /> Camera
+          Quality</label
+        >
+        <label
+          ><input type="checkbox" name="priorities" value="battery" /> Battery
+          Life</label
+        >
+        <label
+          ><input type="checkbox" name="priorities" value="display" /> Display
+          Quality</label
+        >
+        <label
+          ><input type="checkbox" name="priorities" value="performance" />
+          Performance</label
+        >
+        <label
+          ><input type="checkbox" name="priorities" value="build" /> Build
+          Quality</label
+        >
+        <label
+          ><input type="checkbox" name="priorities" value="storage" /> Storage
+          Capacity</label
+        >
+        <label
+          ><input type="checkbox" name="priorities" value="value" /> Value for
+          Money</label
+        >
+        <label
+          ><input
+            type="checkbox"
+            name="priorities"
+            value="overall"
+            id="overall"
+          />
+          Overall Performance</label
+        >
+      </div>
+      <br />
+
+      <input type="submit" value="Get Recommendations" />
+    </form>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const overallCheckbox = document.getElementById("overall");
+        const otherCheckboxes = document.querySelectorAll(
+          "input[name='priorities']:not(#overall)"
+        );
+
+        overallCheckbox.addEventListener("change", function () {
+          if (this.checked) {
+            otherCheckboxes.forEach((cb) => {
+              cb.checked = false;
+              cb.disabled = true;
+            });
+          } else {
+            otherCheckboxes.forEach((cb) => (cb.disabled = false));
+          }
+        });
+
+        otherCheckboxes.forEach((cb) => {
+          cb.addEventListener("change", function () {
+            if (this.checked) {
+              overallCheckbox.checked = false;
+              overallCheckbox.disabled = true;
+            } else if (!Array.from(otherCheckboxes).some((cb) => cb.checked)) {
+              overallCheckbox.disabled = false;
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
